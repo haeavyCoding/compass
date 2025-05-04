@@ -218,10 +218,6 @@
         const errorElement = document.getElementById('error');
         const calibrationElement = document.getElementById('calibration');
 
-        // Hide error message initially
-        errorElement.style.display = 'none';
-
-        // More detailed directions
         const directions = [
             'North', 'North-Northeast', 'Northeast', 'East-Northeast',
             'East', 'East-Southeast', 'Southeast', 'South-Southeast',
@@ -234,27 +230,32 @@
             return directions[index];
         }
 
-        function updateCompass(heading, accuracy) {
-            // Rotate the needle (smoothly)
+        function updateCompass(heading, accuracy = null) {
             needle.style.transform = `translate(0, -50%) rotate(${heading}deg)`;
-
-            // Update the degrees display
             degreesElement.textContent = Math.round(heading);
-
-            // Update direction
             directionElement.textContent = getDirection(heading);
-
-            // Update accuracy if available
-            if (accuracy) {
+            if (accuracy !== null) {
                 accuracyElement.textContent = Math.round(accuracy);
             }
         }
 
-        // Check for compass support
+        function handleOrientation(event) {
+            let heading;
+            if (event.webkitCompassHeading !== undefined) {
+                heading = event.webkitCompassHeading;
+                updateCompass(heading, event.webkitCompassAccuracy);
+            } else if (event.alpha !== null) {
+                heading = 360 - event.alpha;
+                updateCompass(heading);
+            } else {
+                errorElement.style.display = 'block';
+                errorElement.textContent = 'Compass data not available.';
+            }
+        }
+
         if (window.DeviceOrientationEvent) {
-            // Request permission on iOS 13+ devices
             if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-                document.body.addEventListener('click', function () {
+                document.body.addEventListener('click', () => {
                     DeviceOrientationEvent.requestPermission()
                         .then(response => {
                             if (response === 'granted') {
@@ -262,48 +263,29 @@
                                 errorElement.style.display = 'none';
                             } else {
                                 errorElement.style.display = 'block';
-                                errorElement.textContent = 'Permission to access device orientation was denied.';
+                                errorElement.textContent = 'Permission denied.';
                             }
                         })
-                        .catch(console.error);
+                        .catch(err => {
+                            console.error(err);
+                            errorElement.style.display = 'block';
+                            errorElement.textContent = 'Error requesting permission.';
+                        });
                 }, { once: true });
 
                 errorElement.style.display = 'block';
                 errorElement.textContent = 'Tap anywhere to enable compass...';
             } else {
-                // For non-iOS 13+ devices
                 window.addEventListener('deviceorientation', handleOrientation);
             }
         } else {
             errorElement.style.display = 'block';
+            errorElement.textContent = 'DeviceOrientationEvent not supported.';
         }
 
-        function handleOrientation(event) {
-            // Check for iOS compass heading first
-            if (event.webkitCompassHeading !== undefined) {
-                const heading = event.webkitCompassHeading;
-                const accuracy = event.webkitCompassAccuracy;
-                updateCompass(heading, accuracy);
-            }
-            // Check for Android/standard compass data
-            else if (event.absolute === true && event.alpha !== null) {
-                // Use alpha for compass heading (requires absolute orientation)
-                const heading = 360 - event.alpha;
-                updateCompass(heading);
-            }
-            // Fallback for devices that don't provide absolute orientation
-            else if (event.alpha !== null) {
-                calibrationElement.textContent = "Move your device in a figure-8 motion to calibrate the compass.";
-                const heading = 360 - event.alpha;
-                updateCompass(heading);
-            }
-        }
-
-        // Desktop demo mode
         if (!window.DeviceOrientationEvent || window.innerWidth > 768) {
             errorElement.style.display = 'block';
             errorElement.textContent = 'For real compass functionality, please use a mobile device.';
-
             let testAngle = 0;
             setInterval(() => {
                 testAngle = (testAngle + 1) % 360;
