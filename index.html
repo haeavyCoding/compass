@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Compass</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        
+        .compass-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 20px;
+        }
+        
+        .compass-face {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: #fff;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .compass-rose {
+            width: 90%;
+            height: 90%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="none" stroke="black" stroke-width="0.5"/><text x="50" y="15" text-anchor="middle" font-size="8">N</text><text x="85" y="53" text-anchor="middle" font-size="8">E</text><text x="50" y="90" text-anchor="middle" font-size="8">S</text><text x="15" y="53" text-anchor="middle" font-size="8">W</text></svg>');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            border-radius: 50%;
+        }
+        
+        .compass-needle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 80%;
+            height: 4px;
+            background-color: red;
+            transform-origin: left center;
+            transform: translate(0, -50%) rotate(0deg);
+            transition: transform 0.1s ease;
+        }
+        
+        .compass-needle-head {
+            position: absolute;
+            right: -10px;
+            top: -8px;
+            width: 20px;
+            height: 20px;
+            background-color: red;
+            border-radius: 50%;
+        }
+        
+        .direction-info {
+            margin-top: 20px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .coordinates {
+            margin-top: 10px;
+            font-size: 16px;
+        }
+        
+        .error-message {
+            color: red;
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Digital Compass</h1>
+    
+    <div class="compass-container">
+        <div class="compass-face">
+            <div class="compass-rose"></div>
+            <div class="compass-needle">
+                <div class="compass-needle-head"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="direction-info">
+        Direction: <span id="direction">--</span>
+    </div>
+    
+    <div class="coordinates">
+        Degrees: <span id="degrees">0</span>°
+    </div>
+    
+    <div class="error-message" id="error"></div>
+    
+    <script>
+        const needle = document.querySelector('.compass-needle');
+        const directionElement = document.getElementById('direction');
+        const degreesElement = document.getElementById('degrees');
+        const errorElement = document.getElementById('error');
+        
+        // Check if device supports orientation events
+        if (window.DeviceOrientationEvent) {
+            window.addEventListener('deviceorientation', function(event) {
+                // Check if absolute orientation is available
+                if (event.absolute === true || event.webkitCompassHeading !== undefined) {
+                    // For iOS devices
+                    const compassHeading = event.webkitCompassHeading || event.alpha;
+                    updateCompass(compassHeading);
+                } else {
+                    // For Android and other devices
+                    const alpha = event.alpha; // Device orientation around z-axis (0-360)
+                    if (alpha !== null) {
+                        updateCompass(360 - alpha);
+                    }
+                }
+            }, true);
+        } else {
+            errorElement.textContent = "Your device doesn't support compass functionality.";
+        }
+        
+        function updateCompass(heading) {
+            // Rotate the needle
+            needle.style.transform = `translate(0, -50%) rotate(${heading}deg)`;
+            
+            // Update the degrees display
+            degreesElement.textContent = Math.round(heading);
+            
+            // Determine the cardinal direction
+            const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+            const index = Math.round(heading / 45) % 8;
+            directionElement.textContent = directions[index];
+        }
+        
+        // Initial test rotation (for desktop viewing)
+        if (!window.DeviceOrientationEvent) {
+            let testAngle = 0;
+            setInterval(() => {
+                testAngle = (testAngle + 1) % 360;
+                updateCompass(testAngle);
+            }, 50);
+        }
+    </script>
+</body>
+</html>
