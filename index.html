@@ -3,37 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Compass</title>
+    <title>Working Digital Compass</title>
     <style>
         :root {
-            --primary: #2563eb;
-            --secondary: #dc2626;
-            --text: #334155;
-            --bg: #f8fafc;
+            --primary: #3b82f6;
+            --secondary: #ef4444;
+            --text: #1e293b;
+            --bg: #f1f5f9;
             --card: #ffffff;
-            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
 
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: 'Segoe UI', system-ui, sans-serif;
             background-color: var(--bg);
             color: var(--text);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
             padding: 20px;
+            margin: 0;
         }
 
         .container {
             width: 100%;
-            max-width: 400px;
+            max-width: 350px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -48,19 +44,13 @@
         h1 {
             color: var(--primary);
             font-size: 28px;
-            margin-bottom: 5px;
-        }
-
-        .subtitle {
-            color: #64748b;
-            font-size: 16px;
+            margin-bottom: 8px;
         }
 
         .compass {
-            width: 280px;
-            height: 280px;
+            width: 260px;
+            height: 260px;
             position: relative;
-            margin: 20px 0;
         }
 
         .compass-face {
@@ -79,7 +69,7 @@
         .compass-markers {
             width: 90%;
             height: 90%;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="48" fill="none" stroke="%232563eb" stroke-width="0.8"/><text x="50" y="20" text-anchor="middle" font-size="12" fill="%23dc2626" font-weight="bold">N</text><text x="85" y="53" text-anchor="middle" font-size="10" fill="%232563eb">E</text><text x="50" y="90" text-anchor="middle" font-size="10" fill="%232563eb">S</text><text x="15" y="53" text-anchor="middle" font-size="10" fill="%232563eb">W</text></svg>');
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="48" fill="none" stroke="%233b82f6" stroke-width="1"/><text x="50" y="20" text-anchor="middle" font-size="12" fill="%23ef4444" font-weight="bold">N</text><text x="85" y="53" text-anchor="middle" font-size="10" fill="%233b82f6">E</text><text x="50" y="90" text-anchor="middle" font-size="10" fill="%233b82f6">S</text><text x="15" y="53" text-anchor="middle" font-size="10" fill="%233b82f6">W</text></svg>');
             background-size: contain;
             background-repeat: no-repeat;
             position: relative;
@@ -94,7 +84,7 @@
             background-color: var(--secondary);
             transform-origin: left center;
             transform: translate(0, -50%) rotate(0deg);
-            transition: transform 0.15s ease-out;
+            transition: transform 0.1s ease-out;
             z-index: 2;
         }
 
@@ -111,8 +101,8 @@
 
         .compass-center {
             position: absolute;
-            width: 24px;
-            height: 24px;
+            width: 20px;
+            height: 20px;
             background-color: var(--primary);
             border-radius: 50%;
             top: 50%;
@@ -131,14 +121,15 @@
         }
 
         .direction {
-            font-size: 28px;
+            font-size: 26px;
             font-weight: 600;
             color: var(--primary);
             margin: 10px 0;
+            min-height: 40px;
         }
 
         .degrees {
-            font-size: 20px;
+            font-size: 18px;
             margin-bottom: 5px;
         }
 
@@ -148,42 +139,44 @@
         }
 
         .instructions {
-            background-color: #e0f2fe;
-            color: #0369a1;
-            padding: 12px 16px;
+            background-color: #dbeafe;
+            color: #1d4ed8;
+            padding: 12px;
             border-radius: 12px;
             font-size: 14px;
-            margin-top: 10px;
+            margin-top: 15px;
             display: none;
         }
 
         .error {
             background-color: #fee2e2;
             color: #dc2626;
-            padding: 16px;
+            padding: 15px;
             border-radius: 12px;
             text-align: center;
             margin-top: 20px;
             display: none;
+            width: 100%;
         }
 
-        @media (max-width: 400px) {
-            .compass {
-                width: 250px;
-                height: 250px;
-            }
-            
-            h1 {
-                font-size: 24px;
-            }
+        .permission-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-top: 15px;
+            cursor: pointer;
+            display: none;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Smart Compass</h1>
-            <p class="subtitle">Find your direction easily</p>
+            <h1>Digital Compass</h1>
+            <p>Point your device to find direction</p>
         </header>
 
         <div class="compass">
@@ -200,12 +193,14 @@
             <div class="degrees">Angle: <span id="degrees">0</span>°</div>
             <div class="accuracy">Accuracy: ±<span id="accuracy">--</span>°</div>
             <div class="instructions" id="instructions">
-                For best accuracy, move your device in a figure-8 motion
+                <strong>Calibration needed:</strong> Move your device in a figure-8 motion
             </div>
         </div>
 
+        <button class="permission-btn" id="permissionBtn">Enable Compass</button>
+
         <div class="error" id="error">
-            Compass not available. Please try on a mobile device.
+            Compass not available. Please try on a mobile device with orientation sensors.
         </div>
     </div>
 
@@ -217,11 +212,9 @@
         const accuracyEl = document.getElementById('accuracy');
         const instructionsEl = document.getElementById('instructions');
         const errorEl = document.getElementById('error');
+        const permissionBtn = document.getElementById('permissionBtn');
 
-        // Hide error message initially
-        errorElement.style.display = 'none';
-
-        // More detailed directions
+        // Directions (8-point)
         const directions = [
             'North', 'Northeast', 'East', 'Southeast',
             'South', 'Southwest', 'West', 'Northwest'
@@ -233,84 +226,111 @@
         }
 
         function updateCompass(heading, accuracy) {
-            // Rotate the needle (smoothly)
-            needle.style.transform = `translate(0, -50%) rotate(${heading}deg)`;
-
-            // Update the degrees display
-            degreesElement.textContent = Math.round(heading);
-
-            // Update direction
-            directionElement.textContent = getDirection(heading);
-
-            // Update accuracy if available
+            // Rotate needle (inverse because compass rose is fixed)
+            needle.style.transform = `translate(0, -50%) rotate(${-heading}deg)`;
+            
+            // Update display
+            degreesEl.textContent = Math.round(heading);
+            directionEl.textContent = getDirection(heading);
+            
             if (accuracy) {
-                accuracyElement.textContent = Math.round(accuracy);
+                accuracyEl.textContent = Math.round(accuracy);
             }
         }
 
         // Check for compass support
-        if (window.DeviceOrientationEvent) {
-            // Request permission on iOS 13+ devices
+        function initCompass() {
+            // Show permission button for iOS
             if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-                document.body.addEventListener('click', function () {
-                    DeviceOrientationEvent.requestPermission()
-                        .then(permissionState => {
-                            if (permissionState === 'granted') {
-                                startCompass();
-                                errorEl.style.display = 'none';
-                            } else {
-                                errorElement.style.display = 'block';
-                                errorElement.textContent = 'Permission to access device orientation was denied.';
-                            }
-                        })
-                        .catch(console.error);
-                }, { once: true });
-                
-                showError('Tap anywhere to enable compass');
-            } else {
-                // For non-iOS 13+ devices
-                window.addEventListener('deviceorientation', handleOrientation);
-                instructionsEl.style.display = 'block';
+                permissionBtn.style.display = 'block';
+                errorEl.style.display = 'none';
+                permissionBtn.addEventListener('click', requestPermission);
+                return;
             }
-        } else {
-            errorElement.style.display = 'block';
+
+            // Check for regular support
+            if (!window.DeviceOrientationEvent) {
+                showError();
+                return;
+            }
+
+            // Try to start compass
+            startCompass();
         }
 
-        function handleOrientation(event) {
-            // Check for iOS compass heading first
+        function requestPermission() {
+            DeviceOrientationEvent.requestPermission()
+                .then(permissionState => {
+                    if (permissionState === 'granted') {
+                        permissionBtn.style.display = 'none';
+                        startCompass();
+                    } else {
+                        showError('Permission denied. Please enable device orientation in settings.');
+                    }
+                })
+                .catch(err => {
+                    showError('Error accessing compass: ' + err.message);
+                });
+        }
+
+        function startCompass() {
+            errorEl.style.display = 'none';
+            
+            // iOS webkit compass (most reliable)
+            if ('webkitCompassHeading' in window) {
+                window.addEventListener('deviceorientation', handleIOSCompass);
+                return;
+            }
+
+            // Android/other devices
+            window.addEventListener('deviceorientation', handleStandardCompass);
+            instructionsEl.style.display = 'block'; // Show calibration instructions
+        }
+
+        function handleIOSCompass(event) {
             if (event.webkitCompassHeading !== undefined) {
-                const heading = event.webkitCompassHeading;
-                const accuracy = event.webkitCompassAccuracy;
-                updateCompass(heading, accuracy);
+                updateCompass(
+                    event.webkitCompassHeading,
+                    event.webkitCompassAccuracy
+                );
             }
-            // Check for Android/standard compass data
-            else if (event.absolute === true && event.alpha !== null) {
-                // Use alpha for compass heading (requires absolute orientation)
-                const heading = 360 - event.alpha;
-                updateCompass(heading);
-            }
-            // Fallback for devices that don't provide absolute orientation
-            else if (event.alpha !== null) {
-                calibrationElement.textContent = "Move your device in a figure-8 motion to calibrate the compass.";
-                const heading = 360 - event.alpha;
+        }
+
+        function handleStandardCompass(event) {
+            if (event.alpha !== null) {
+                // Use alpha for compass heading
+                let heading = event.alpha; // 0-360 degrees
+                
+                // Adjust for device orientation
+                if (window.orientation) {
+                    if (Math.abs(window.orientation) === 90) {
+                        heading = (heading + (window.orientation > 0 ? 90 : -90)) % 360;
+                    }
+                }
+                
+                // Ensure positive value
+                if (heading < 0) heading += 360;
+                
                 updateCompass(heading);
             }
         }
 
-        // Desktop demo mode
-        if (!window.DeviceOrientationEvent || window.innerWidth > 768) {
-            errorElement.style.display = 'block';
-            errorElement.textContent = 'For real compass functionality, please use a mobile device.';
-
-            let testAngle = 0;
-            setInterval(() => {
-                testAngle = (testAngle + 1) % 360;
-                updateCompass(testAngle, 5);
-            }, 100);
+        function showError(message) {
+            errorEl.style.display = 'block';
+            if (message) errorEl.textContent = message;
+            
+            // Demo mode on desktop
+            if (window.innerWidth > 768) {
+                let angle = 0;
+                setInterval(() => {
+                    angle = (angle + 1) % 360;
+                    updateCompass(angle, 5);
+                }, 50);
+            }
         }
 
-        // Initialize
-        initCompass();
+        // Initialize when page loads
+        window.addEventListener('load', initCompass);
     </script>
 </body>
 </html>
