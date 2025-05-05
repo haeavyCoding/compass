@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Digital Compass</title>
+    <title>Digital Compass Without Needle</title>
     <style>
         :root {
             --primary: #2563eb;      /* Blue */
@@ -80,29 +80,6 @@
             top: 0;
             left: 0;
             transition: transform 0.2s ease-out;
-        }
-
-        .compass-needle {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 40%;
-            height: 4px;
-            background-color: var(--secondary);
-            transform-origin: left center;
-            transform: translate(0, -50%) rotate(0deg);
-            z-index: 2;
-        }
-
-        .compass-needle::after {
-            content: '';
-            position: absolute;
-            right: -10px;
-            top: -8px;
-            width: 20px;
-            height: 20px;
-            background-color: var(--secondary);
-            border-radius: 50%;
         }
 
         .compass-center {
@@ -204,7 +181,6 @@
         <div class="compass-container">
             <div class="compass-face">
                 <div class="compass-rose" id="compassRose"></div>
-                <div class="compass-needle"></div>
                 <div class="compass-center"></div>
             </div>
         </div>
@@ -239,7 +215,6 @@
     <script>
         // DOM Elements
         const compassRose = document.getElementById('compassRose');
-        const needle = document.querySelector('.compass-needle');
         const directionEl = document.getElementById('direction');
         const degreesEl = document.getElementById('degrees');
         const accuracyEl = document.getElementById('accuracy');
@@ -261,11 +236,8 @@
 
         // Update compass display
         function updateCompass(heading, accuracy) {
-            // Rotate the compass rose (so markers stay fixed relative to Earth)
+            // Rotate the compass rose
             compassRose.style.transform = `rotate(${heading}deg)`;
-            
-            // Keep needle pointing up (relative to device)
-            needle.style.transform = `translate(0, -50%) rotate(0deg)`;
             
             // Update information display
             degreesEl.textContent = `${Math.round(heading)}°`;
