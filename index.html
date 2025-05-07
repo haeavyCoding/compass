@@ -35,7 +35,7 @@
       gap: 15px;
     }
     header {
-      margin-bottom: 10px;
+      /* margin-bottom: 10px; */
     }
     h1 {
       color: var(--primary);
@@ -146,6 +146,53 @@
         height: 250px;
       }
     }
+    body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: linear-gradient(-45deg, #ff416c, #ff4b2b, #1a2a6c, #b21f1f, #fdbb2d);
+  background-size: 500% 500%;
+  animation: gradientShift 20s ease infinite;
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  margin: 0;
+  text-align: center;
+}
+.info-panel {
+  background-color: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(5px);
+  border-radius: 12px;
+  padding: 15px;
+  width: 100%;
+  box-shadow: var(--shadow);
+}
+.compass-center {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background-color: var(--primary);
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  box-shadow: 0 0 12px var(--primary);
+}
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
   </style>
 </head>
 <body>
