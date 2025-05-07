@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Enhanced Digital Compass, Age & Weather</title>
+  <title>Digital Compass, Age & Weather</title>
   <style>
     :root {
       --bg: #0f172a;
@@ -13,7 +13,6 @@
       --card: #1e293b;
       --shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
     }
-
     body {
       font-family: 'Segoe UI', system-ui, sans-serif;
       background: linear-gradient(to bottom, #0f172a, #1e293b);
@@ -26,28 +25,24 @@
       text-align: center;
       padding: 20px;
     }
-
     .container {
-      max-width: 340px;
+      max-width: 360px;
       width: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 20px;
     }
-
     h1 {
       font-size: 28px;
       color: var(--primary);
       margin-bottom: 5px;
       text-shadow: 0 0 6px #facc15aa;
     }
-
     .subtitle {
       color: #94a3b8;
       font-size: 14px;
     }
-
     .compass-container {
       width: 280px;
       height: 280px;
@@ -57,7 +52,6 @@
       box-shadow: inset 0 0 30px #000, 0 0 20px #1e40af80;
       border: 6px solid var(--primary);
     }
-
     .compass-rose {
       width: 100%;
       height: 100%;
@@ -70,7 +64,6 @@
       top: 0;
       left: 0;
     }
-
     .compass-center {
       position: absolute;
       top: 50%;
@@ -83,7 +76,6 @@
       box-shadow: 0 0 8px var(--primary);
       z-index: 2;
     }
-
     .info-panel {
       background-color: var(--card);
       border-radius: 12px;
@@ -91,53 +83,44 @@
       box-shadow: var(--shadow);
       width: 100%;
     }
-
     .direction {
       font-size: 22px;
       font-weight: 700;
       color: var(--primary);
       margin: 10px 0;
     }
-
     .details {
       display: flex;
       justify-content: space-around;
       margin-top: 10px;
     }
-
     .detail-box {
       text-align: center;
     }
-
     .detail-value {
       font-size: 18px;
       font-weight: 600;
       color: var(--text);
     }
-
     .detail-label {
       font-size: 12px;
       color: #cbd5e1;
     }
-
     .message {
       padding: 12px;
       border-radius: 8px;
       font-size: 14px;
       display: none;
     }
-
     .instruction {
       background-color: #1e40af33;
       color: var(--primary);
       font-weight: bold;
     }
-
     .error {
       background-color: #dc2626;
       color: #fff;
     }
-
     .permission-btn {
       background-color: var(--primary);
       color: #0f172a;
@@ -150,8 +133,6 @@
       display: none;
       box-shadow: 0 0 10px #facc15aa;
     }
-
-    /* Age Calculator Section */
     .age-calculator {
       background-color: var(--card);
       padding: 16px;
@@ -159,26 +140,22 @@
       box-shadow: var(--shadow);
       width: 100%;
     }
-
     .age-result {
       font-size: 18px;
       font-weight: 600;
       color: var(--primary);
       margin-top: 15px;
     }
-
     .weather-info {
       font-size: 16px;
       font-weight: 600;
       color: var(--text);
       margin-top: 20px;
     }
-
     .weather-info span {
       font-size: 14px;
       color: #cbd5e1;
     }
-
     input, button {
       padding: 10px;
       border-radius: 8px;
@@ -193,12 +170,11 @@
     <h1>Digital Compass, Age & Weather</h1>
     <p class="subtitle">Follow your direction, calculate your age, and check the weather!</p>
 
-    <!-- Compass Section -->
+    <!-- Compass -->
     <div class="compass-container">
       <div class="compass-rose" id="compassRose"></div>
       <div class="compass-center"></div>
     </div>
-
     <div class="info-panel">
       <div>You are facing:</div>
       <div class="direction" id="direction">--</div>
@@ -213,18 +189,11 @@
         </div>
       </div>
     </div>
-
-    <div class="message instruction" id="instructions">
-      Move your phone in a figure-8 to calibrate.
-    </div>
-
+    <div class="message instruction" id="instructions">Move your phone in a figure-8 to calibrate.</div>
     <button class="permission-btn" id="permissionBtn">Enable Compass</button>
+    <div class="message error" id="error">Compass not available. Try using a mobile device.</div>
 
-    <div class="message error" id="error">
-      Compass not available. Try using a mobile device.
-    </div>
-
-    <!-- Age Calculator Section -->
+    <!-- Age Calculator -->
     <div class="age-calculator">
       <h3>Age Calculator</h3>
       <input type="date" id="dob" />
@@ -232,61 +201,66 @@
       <div class="age-result" id="ageResult">Your age will appear here.</div>
     </div>
 
-    <!-- Weather Information Section -->
+    <!-- Weather Info -->
     <div class="weather-info" id="weatherInfo">Loading weather...</div>
   </div>
 
   <script>
-    // Age Calculator Script
+    // Age calculator
     document.getElementById("calculateAge").addEventListener("click", function() {
       const dob = document.getElementById("dob").value;
       if (dob) {
         const birthDate = new Date(dob);
         const today = new Date();
-        const ageYears = today.getFullYear() - birthDate.getFullYear();
-        const ageMonths = today.getMonth() - birthDate.getMonth();
-        const ageDays = today.getDate() - birthDate.getDate();
-        const ageHours = today.getHours() - birthDate.getHours();
-        const ageMinutes = today.getMinutes() - birthDate.getMinutes();
-        const ageSeconds = today.getSeconds() - birthDate.getSeconds();
 
-        const ageResult = document.getElementById("ageResult");
-        
-        let finalAge = `${ageYears} years, ${ageMonths} months, ${ageDays} days, ${ageHours} hours, ${ageMinutes} minutes, ${ageSeconds} seconds`;
-        ageResult.textContent = `Your age: ${finalAge}`;
+        let years = today.getFullYear() - birthDate.getFullYear();
+        let months = today.getMonth() - birthDate.getMonth();
+        let days = today.getDate() - birthDate.getDate();
+        if (days < 0) {
+          months--;
+          days += 30;
+        }
+        if (months < 0) {
+          years--;
+          months += 12;
+        }
+
+        const result = `${years} years, ${months} months, ${days} days`;
+        document.getElementById("ageResult").textContent = `Your age: ${result}`;
       } else {
         alert("Please select a valid date of birth.");
       }
     });
 
-    // Weather Information Script
+    // Weather API using WeatherAPI.com
     function fetchWeather() {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
           const lat = position.coords.latitude;
           const lon = position.coords.longitude;
-          const apiKey = "YOUR_API_KEY"; // Replace with your OpenWeatherMap API key
-          const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
+          const apiKey = "fd5e477b95e04d7cbf665739250705"; // Demo key
+          const url = `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${lat},${lon}&aqi=no`;
 
-          fetch(weatherUrl)
+          fetch(url)
             .then(response => response.json())
             .then(data => {
-              const weatherInfo = document.getElementById("weatherInfo");
-              const temp = data.main.temp;
-              const weather = data.weather[0].description;
-              const city = data.name;
-              weatherInfo.innerHTML = `Current Weather in ${city}: ${temp}°C, ${weather}`;
+              const location = data.location.name + ", " + data.location.region;
+              const temp = data.current.temp_c;
+              const condition = data.current.condition.text;
+              const icon = data.current.condition.icon;
+              document.getElementById("weatherInfo").innerHTML = `
+                <div>Weather in ${location}: ${temp}°C, ${condition}</div>
+                <img src="https:${icon}" alt="${condition}" />
+              `;
             })
             .catch(() => {
-              document.getElementById("weatherInfo").innerHTML = "Weather data not available.";
+              document.getElementById("weatherInfo").textContent = "Weather data not available.";
             });
         });
       } else {
-        document.getElementById("weatherInfo").innerHTML = "Geolocation is not supported by this browser.";
+        document.getElementById("weatherInfo").textContent = "Geolocation is not supported.";
       }
     }
-
-    // Call the weather function when the page loads
     window.onload = fetchWeather;
   </script>
 </body>
