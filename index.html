@@ -52,7 +52,6 @@
             font-size: 14px;
         }
 
-        /* Compass Styles */
         .compass-container {
             width: 280px;
             height: 280px;
@@ -94,7 +93,6 @@
             z-index: 3;
         }
 
-        /* Information Panel */
         .info-panel {
             background-color: var(--card);
             border-radius: 12px;
@@ -132,7 +130,6 @@
             color: #64748b;
         }
 
-        /* Messages */
         .message {
             padding: 12px;
             border-radius: 8px;
@@ -188,7 +185,6 @@
         <div class="info-panel">
             <div>You are facing:</div>
             <div class="direction" id="direction">--</div>
-            
             <div class="details">
                 <div class="detail-box">
                     <div class="detail-value" id="degrees">0°</div>
@@ -206,14 +202,25 @@
         </div>
 
         <button class="permission-btn" id="permissionBtn">Enable Compass</button>
-
         <div class="message error" id="error">
             Compass not available. Please use a mobile device with orientation sensors.
+        </div>
+
+        <!-- Age and Weather Panel -->
+        <div class="info-panel">
+            <div style="margin-bottom: 10px;">
+                <input type="date" id="dob" style="padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1;" />
+                <button onclick="calculateAge()" style="padding: 8px 12px; margin-left: 8px; border: none; border-radius: 6px; background-color: var(--primary); color: white;">Get Age</button>
+            </div>
+            <div class="detail-value" id="ageResult">Your age: --</div>
+        </div>
+
+        <div class="info-panel" id="weatherPanel">
+            <div class="detail-value">Weather: <span id="weatherInfo">--</span></div>
         </div>
     </div>
 
     <script>
-        // DOM Elements
         const compassRose = document.getElementById('compassRose');
         const directionEl = document.getElementById('direction');
         const degreesEl = document.getElementById('degrees');
@@ -222,52 +229,40 @@
         const errorEl = document.getElementById('error');
         const permissionBtn = document.getElementById('permissionBtn');
 
-        // 8 Primary Directions
         const directions = [
             'North', 'Northeast', 'East', 'Southeast',
             'South', 'Southwest', 'West', 'Northwest'
         ];
 
-        // Get direction name from degree
         function getDirection(heading) {
             const index = Math.round(heading / 45) % 8;
             return directions[index];
         }
 
-        // Update compass display
         function updateCompass(heading, accuracy) {
-            // Rotate the compass rose
             compassRose.style.transform = `rotate(${heading}deg)`;
-            
-            // Update information display
             degreesEl.textContent = `${Math.round(heading)}°`;
             directionEl.textContent = getDirection(heading);
-            
             if (accuracy) {
                 accuracyEl.textContent = `±${Math.round(accuracy)}°`;
             }
         }
 
-        // Initialize compass
         function initCompass() {
-            // iOS 13+ devices need permission
             if (typeof DeviceOrientationEvent.requestPermission === 'function') {
                 permissionBtn.style.display = 'block';
                 permissionBtn.addEventListener('click', requestPermission);
                 return;
             }
 
-            // Check for compass support
             if (!window.DeviceOrientationEvent) {
                 showError();
                 return;
             }
 
-            // Start compass
             startCompass();
         }
 
-        // Request permission on iOS
         function requestPermission() {
             DeviceOrientationEvent.requestPermission()
                 .then(response => {
@@ -281,56 +276,41 @@
                 .catch(showError);
         }
 
-        // Start compass functionality
         function startCompass() {
             errorEl.style.display = 'none';
-            
-            // iOS devices with webkitCompassHeading
+
             if ('webkitCompassHeading' in window) {
                 window.addEventListener('deviceorientation', handleIOSCompass);
                 return;
             }
 
-            // Standard device orientation
             window.addEventListener('deviceorientation', handleStandardCompass);
-            instructionsEl.style.display = 'block'; // Show calibration instructions
+            instructionsEl.style.display = 'block';
         }
 
-        // Handle iOS compass data
         function handleIOSCompass(event) {
             if (event.webkitCompassHeading !== undefined) {
-                updateCompass(
-                    event.webkitCompassHeading,
-                    event.webkitCompassAccuracy
-                );
+                updateCompass(event.webkitCompassHeading, event.webkitCompassAccuracy);
             }
         }
 
-        // Handle standard compass data
         function handleStandardCompass(event) {
             if (event.alpha !== null) {
-                let heading = event.alpha; // 0-360 degrees
-                
-                // Adjust for device orientation
+                let heading = event.alpha;
                 if (window.orientation) {
                     if (Math.abs(window.orientation) === 90) {
                         heading = (heading + (window.orientation > 0 ? 90 : -90)) % 360;
                     }
                 }
-                
-                // Ensure positive value
                 if (heading < 0) heading += 360;
-                
                 updateCompass(heading);
             }
         }
 
-        // Show error message
         function showError(message) {
             errorEl.style.display = 'block';
             if (message) errorEl.textContent = message;
-            
-            // Desktop demo mode
+
             if (window.innerWidth > 768) {
                 let angle = 0;
                 setInterval(() => {
@@ -340,8 +320,59 @@
             }
         }
 
-        // Initialize when page loads
-        window.addEventListener('load', initCompass);
+        // Age Calculator
+        function calculateAge() {
+            const dobInput = document.getElementById("dob").value;
+            const resultEl = document.getElementById("ageResult");
+
+            if (!dobInput) {
+                resultEl.textContent = "Please enter your birthdate.";
+                return;
+            }
+
+            const dob = new Date(dobInput);
+            const now = new Date();
+            let age = now.getFullYear() - dob.getFullYear();
+            const m = now.getMonth() - dob.getMonth();
+
+            if (m < 0 || (m === 0 && now.getDate() < dob.getDate())) {
+                age--;
+            }
+
+            resultEl.textContent = `Your age: ${age} years`;
+        }
+
+        // Weather Fetch
+        function fetchWeather() {
+            if (!navigator.geolocation) {
+                document.getElementById("weatherInfo").textContent = "Geolocation not supported.";
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(position => {
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+                const apiKey = 'fd5e477b95e04d7cbf665739250705'; // 🔑 Replace with your OpenWeatherMap API key
+
+                fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${apiKey}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        const temp = data.main.temp;
+                        const condition = data.weather[0].description;
+                        document.getElementById("weatherInfo").textContent = `${temp}°C, ${condition}`;
+                    })
+                    .catch(err => {
+                        document.getElementById("weatherInfo").textContent = "Weather fetch failed.";
+                    });
+            }, () => {
+                document.getElementById("weatherInfo").textContent = "Location access denied.";
+            });
+        }
+
+        window.addEventListener('load', () => {
+            initCompass();
+            fetchWeather();
+        });
     </script>
 </body>
 </html>
