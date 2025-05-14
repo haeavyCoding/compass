@@ -3,7 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<<<<<<< HEAD
   <title>Digital Compass</title>
+=======
+  <title>Digital Compass Without Needle</title>
+>>>>>>> 1f8ad593aba0a97a49130db36b024458f1c0cc93
   <style>
     :root {
       --primary: #2563eb;
@@ -35,7 +39,11 @@
       gap: 15px;
     }
     header {
+<<<<<<< HEAD
       margin-bottom: 10px;
+=======
+      /* margin-bottom: 10px; */
+>>>>>>> 1f8ad593aba0a97a49130db36b024458f1c0cc93
     }
     h1 {
       color: var(--primary);
@@ -146,6 +154,56 @@
         height: 250px;
       }
     }
+<<<<<<< HEAD
+=======
+    body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: linear-gradient(-45deg, #ff416c, #ff4b2b, #1a2a6c, #b21f1f, #fdbb2d);
+  background-size: 500% 500%;
+  animation: gradientShift 20s ease infinite;
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  margin: 0;
+  text-align: center;
+}
+.info-panel {
+  background-color: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(5px);
+  border-radius: 12px;
+  padding: 15px;
+  width: 100%;
+  box-shadow: var(--shadow);
+}
+.compass-center {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background-color: var(--primary);
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  box-shadow: 0 0 12px var(--primary);
+}
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+>>>>>>> 1f8ad593aba0a97a49130db36b024458f1c0cc93
   </style>
 </head>
 <body>
@@ -208,16 +266,27 @@
     const errorEl = document.getElementById('error');
     const permissionBtn = document.getElementById('permissionBtn');
 
+<<<<<<< HEAD
     const directions = ['North', 'North-East', 'East', 'South-East', 'South', 'South-West', 'West', 'North-West'];
 
     function getDirection(heading) {
       const index = Math.round(((360 - heading) % 360) / 45) % 8;
+=======
+    const directions = ['North', 'Northeast', 'East', 'Southeast', 'South', 'Southwest', 'West', 'Northwest'];
+
+    function getDirection(heading) {
+      const index = Math.round(heading / 45) % 8;
+>>>>>>> 1f8ad593aba0a97a49130db36b024458f1c0cc93
       return directions[index];
     }
 
     function updateCompass(heading, accuracy) {
+<<<<<<< HEAD
       // Rotate the compass rose in the opposite direction to compensate for device rotation
       compassRose.style.transform = `rotate(${-heading}deg)`;
+=======
+      compassRose.style.transform = `rotate(${heading}deg)`;
+>>>>>>> 1f8ad593aba0a97a49130db36b024458f1c0cc93
       degreesEl.textContent = `${Math.round(heading)}°`;
       directionEl.textContent = getDirection(heading);
       if (accuracy) accuracyEl.textContent = `±${Math.round(accuracy)}°`;
@@ -267,6 +336,7 @@
 
     function handleStandardCompass(event) {
       if (event.alpha !== null) {
+<<<<<<< HEAD
         let heading = event.alpha; // alpha is compass heading (0-360)
         
         // Adjust for device orientation
@@ -281,6 +351,16 @@
         if (heading < 0) heading += 360;
         
         updateCompass(heading, event.webkitCompassAccuracy);
+=======
+        let heading = event.alpha;
+        if (window.orientation) {
+          if (Math.abs(window.orientation) === 90) {
+            heading = (heading + (window.orientation > 0 ? 90 : -90)) % 360;
+          }
+        }
+        if (heading < 0) heading += 360;
+        updateCompass(heading);
+>>>>>>> 1f8ad593aba0a97a49130db36b024458f1c0cc93
       }
     }
 
